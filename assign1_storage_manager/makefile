@@ -1,25 +1,26 @@
-CC = gcc
-CFLAGS  = -g -Wall 
- 
-default: test1
+CC=gcc
+## CFLAGS=-I
+DEPS=dberror.h storage_mgr.h test_helper.h
 
-test1: test_assign1_1.o storage_mgr.o dberror.o 
-	$(CC) $(CFLAGS) -o test1 test_assign1_1.o storage_mgr.o dberror.o -lm
+OBJ=dberror.o storage_mgr.o
 
-test_assign1_1.o: test_assign1_1.c dberror.h storage_mgr.h test_helper.h
-	$(CC) $(CFLAGS) -c test_assign1_1.c -lm
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $<
 
-storage_mgr.o: storage_mgr.c storage_mgr.h 
-	$(CC) $(CFLAGS) -c storage_mgr.c -lm
+all: test_assign1_1
 
-dberror.o: dberror.c dberror.h 
-	$(CC) $(CFLAGS) -c dberror.c
+test_assign1_1:	$(OBJ) test_assign1_1.o
+	$(CC) -o $@ $^
 
-clean: 
-	$(RM) test1 test2 *.o *~
+dberror.o: dberror.c
+	$(CC) -c dberror.c
 
-run_test1:
-	./test1
+storage_mgr.o: storage_mgr.c
+	$(CC) -c storage_mgr.c
 
-run_test2:
-	./test2
+test_assign1_1.o: test_assign1_1.c
+	$(CC) -c test_assign1_1.c
+
+.PHONY: clean
+clean:
+	-rm -f test_assign1_1 *.o *.log
